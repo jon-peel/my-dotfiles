@@ -1,0 +1,43 @@
+* NixOS Config
+
+** Structure
+
+#+begin_example
+nixconfig/
+├── system/      NixOS system configuration
+├── user/        Home Manager user configuration
+└── dotfiles/    Raw config files (symlinked by modules)
+    └── doom/    Doom Emacs config (~/.config/doom)
+#+end_example
+
+** Commands
+
+*** Update flake locks
+
+Update system flake inputs:
+#+begin_src sh
+nix flake update --flake ./system
+#+end_src
+
+Update home manager flake inputs:
+#+begin_src sh
+nix flake update --flake ./user
+#+end_src
+
+*** Rebuild system
+
+#+begin_src sh
+sudo nixos-rebuild switch --flake ./system#nixos
+#+end_src
+
+*** Rebuild home manager
+
+#+begin_src sh
+home-manager switch --flake ./user#nixos
+#+end_src
+
+** Modules
+
+| Module           | Option                | Description                              |
+|------------------+-----------------------+------------------------------------------|
+| =my-emacs=       | =my.emacs.enable=     | Emacs + symlinks =dotfiles/doom= to =~/.config/doom= |

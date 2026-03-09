@@ -1,0 +1,31 @@
+[theme]
+theme = "ctp-mocha"
+
+[icons]
+icons = "material-nf"
+
+[[block]]
+block = "cpu"
+format = " $icon $utilization "
+interval = 5
+
+[[block]]
+block = "memory"
+format = " $icon $mem_used_percents "
+interval = 5
+
+[[block]]
+block = "disk_space"
+path = "/"
+format = " $icon $available "
+interval = 20
+
+[[block]]
+block = "net"
+format = " $icon {$ssid |}{$signal_strength |}$speed_down.eng(prefix:K) $speed_up.eng(prefix:K) "
+interval = 5
+
+[[block]]
+block = "time"
+format = " $icon $timestamp.datetime(f:'%a %d %b  %H:%M') "
+interval = 60
