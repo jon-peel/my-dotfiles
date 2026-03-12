@@ -2,68 +2,26 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Create `modules/terminal.nix` providing Ghostty terminal with JetBrains Mono Nerd Font and automatic macOS dark/light Tokyo Night theme switching.
+**Goal:** Create `modules/terminal.nix` providing WezTerm terminal with JetBrains Mono Nerd Font and automatic macOS dark/light Tokyo Night theme switching.
 
-**Architecture:** Same `my.<name>.enable` pattern as existing modules. Font installed via `home.packages` and symlinked into `~/Library/Fonts/` for macOS discovery. Ghostty configured via `programs.ghostty.settings`.
+**Architecture:** Same `my.<name>.enable` pattern as existing modules. Font installed via `home.packages` and symlinked into `~/Library/Fonts/` for macOS discovery. WezTerm configured via `programs.wezterm.extraConfig` (Lua).
 
-**Tech Stack:** Nix Home Manager, Ghostty, pkgs.nerd-fonts.jetbrains-mono, nixpkgs-unstable
-
----
-
-### Task 1: Verify available theme names
-
-Ghostty ships built-in themes but their exact names must be confirmed before writing config.
-
-**Step 1: Check if Ghostty is already installed**
-
-```bash
-which ghostty || echo "not installed"
-```
-
-**Step 2: If installed, list available Tokyo Night themes**
-
-```bash
-ghostty +list-themes | grep -i tokyo
-```
-
-Expected output: lines containing something like `tokyonight` and `tokyonight_day` (or similar variants).
-
-**Step 3: Note the exact dark and light theme names**
-
-These will be used in Task 2 as `theme = "light:<light-name>,dark:<dark-name>"`.
-
-If Ghostty is not yet installed, use these defaults (correct as of Ghostty 1.x):
-- Dark: `tokyonight`
-- Light: `tokyonight_day`
+**Tech Stack:** Nix Home Manager, WezTerm, pkgs.nerd-fonts.jetbrains-mono, nixpkgs-unstable
 
 ---
 
-### Task 2: Create modules/terminal.nix
+### Task 1: Create modules/terminal.nix
 
 **Files:**
 - Create: `modules/terminal.nix`
 
-**Step 1: Check the JetBrains Mono Nerd Font package path**
-
-```bash
-nix eval --raw nixpkgs#nerd-fonts.jetbrains-mono.outPath 2>/dev/null || echo "check manually"
-```
-
-Then find the font directory:
-
-```bash
-ls $(nix eval --raw nixpkgs#nerd-fonts.jetbrains-mono.outPath)/share/fonts/
-```
-
-The font files are typically under `share/fonts/truetype/NerdFonts/` — confirm the exact subdirectory.
-
-**Step 2: Write the file**
+**Step 1: Write the file**
 
 ```nix
 { config, lib, pkgs, ... }:
 
 {
-  options.my.terminal.enable = lib.mkEnableOption "Ghostty terminal with JetBrains Mono Nerd Font";
+  options.my.terminal.enable = lib.mkEnableOption "WezTerm terminal with JetBrains Mono Nerd Font";
 
   config = lib.mkIf config.my.terminal.enable {
 
@@ -71,44 +29,67 @@ The font files are typically under `share/fonts/truetype/NerdFonts/` — confirm
     home.packages = [ pkgs.nerd-fonts.jetbrains-mono ];
 
     home.file."Library/Fonts/JetBrainsMonoNF" = {
-      source = "${pkgs.nerd-fonts.jetbrains-mono}/share/fonts/truetype/NerdFonts";
+      source = "${pkgs.nerd-fonts.jetbrains-mono}/share/fonts/truetype/NerdFonts/JetBrainsMono";
       recursive = true;
     };
 
-    programs.ghostty = {
+    programs.wezterm = {
       enable = true;
-      settings = {
-        font-family = "JetBrainsMono Nerd Font Mono";
-        font-size = 12;
-        theme = "light:tokyonight_day,dark:tokyonight";
-      };
+      extraConfig = ''
+        local wezterm = require 'wezterm'
+        local config = wezterm.config_builder()
+
+        config.font = wezterm.font 'JetBrainsMono Nerd Font Mono'
+        config.font_size = 12.0
+
+        -- Automatic dark/light theme based on macOS appearance
+        local function scheme_for_appearance(appearance)
+          if appearance:find 'Dark' then
+            return 'Tokyo Night'
+          else
+            return 'Tokyo Night Day'
+          end
+        end
+
+        config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
+
+        wezterm.on('window-config-reloaded', function(window)
+          local overrides = window:get_config_overrides() or {}
+          local appearance = window:get_appearance()
+          local scheme = scheme_for_appearance(appearance)
+          if overrides.color_scheme ~= scheme then
+            overrides.color_scheme = scheme
+            window:set_config_overrides(overrides)
+          end
+        end)
+
+        return config
+      '';
     };
 
   };
 }
 ```
 
-**Note:** Adjust the `home.file` source path if the font directory found in Step 1 differs from `share/fonts/truetype/NerdFonts`. Adjust `theme` values if the names found in Task 1 differ.
-
-**Step 3: Verify the file was written correctly**
+**Step 2: Verify the file was written correctly**
 
 Read back `modules/terminal.nix` and confirm it matches.
 
-**Step 4: Commit**
+**Step 3: Commit**
 
 ```bash
 git add modules/terminal.nix
-git commit -m "feat: add modules/terminal.nix with Ghostty and JetBrains Mono NF"
+git commit -m "feat: add modules/terminal.nix with WezTerm and JetBrains Mono NF"
 ```
 
 ---
 
-### Task 3: Update home.nix
+### Task 2: Update home.nix
 
 **Files:**
 - Modify: `home.nix`
 
-**Step 1: Add the import and enable the module**
+**Step 1: Write the updated file**
 
 ```nix
 { ... }: {
@@ -146,7 +127,7 @@ git commit -m "feat: enable terminal module in home.nix"
 
 ---
 
-### Task 4: Activate and verify
+### Task 3: Activate and verify
 
 **Step 1: Switch**
 
@@ -154,27 +135,24 @@ git commit -m "feat: enable terminal module in home.nix"
 home-manager switch --flake .#me
 ```
 
-If it fails with "existing file would be clobbered" for `~/.config/ghostty/config`, run:
+If it fails with "existing file would be clobbered", move conflicting files out of the way:
 
 ```bash
-mv ~/.config/ghostty/config ~/.config/ghostty/config.pre-hm
+mv ~/.wezterm.lua ~/.wezterm.lua.pre-hm 2>/dev/null
+mv ~/.config/wezterm/wezterm.lua ~/.config/wezterm/wezterm.lua.pre-hm 2>/dev/null
 home-manager switch --flake .#me
 ```
 
 Expected: activation completes without errors.
 
-**Step 2: Open Ghostty**
+**Step 2: Open WezTerm**
 
-Launch Ghostty from Spotlight or Applications. Verify:
-- Font renders correctly (JetBrains Mono, no missing glyphs)
-- Theme matches system appearance (dark in dark mode, light in light mode)
-- Toggle macOS dark/light mode (System Settings → Appearance) and confirm Ghostty switches
+Launch WezTerm from Spotlight or Applications. Verify:
+- Font renders correctly (JetBrains Mono, Nerd Font glyphs visible)
+- Theme matches system appearance (Tokyo Night dark / Tokyo Night Day light)
+- Toggle macOS dark/light mode (System Settings → Appearance) — WezTerm should switch theme live
 
-**Step 3: Verify font size**
-
-Font should appear at size 12. If too small or large, note it — the user will adjust.
-
-**Step 4: Commit flake.lock if updated**
+**Step 3: Commit flake.lock if updated**
 
 ```bash
 git diff flake.lock
@@ -190,6 +168,7 @@ git commit -m "chore: update flake.lock"
 
 ## Notes
 
-- `programs.ghostty` was added to Home Manager after Ghostty's December 2024 release. If evaluation fails with "attribute 'ghostty' missing", fall back to managing the config file directly: `home.file.".config/ghostty/config".text = "font-family = JetBrainsMono Nerd Font Mono\nfont-size = 12\ntheme = light:tokyonight_day,dark:tokyonight\n";`
-- The font name Ghostty expects is `JetBrainsMono Nerd Font Mono` (with "Mono" suffix) — this is the monospaced variant. If Ghostty shows a fallback font, try `JetBrainsMono Nerd Font` without the suffix.
-- `home.file."Library/Fonts/..."` creates a symlink in `~/Library/Fonts/`. macOS will discover fonts here without any additional steps.
+- WezTerm's built-in Tokyo Night theme names are exactly `Tokyo Night` (dark) and `Tokyo Night Day` (light).
+- The `window-config-reloaded` event handler makes WezTerm respond to live OS appearance changes without restarting.
+- Font path `share/fonts/truetype/NerdFonts/JetBrainsMono` confirmed present in `pkgs.nerd-fonts.jetbrains-mono`.
+- Font name WezTerm expects: `JetBrainsMono Nerd Font Mono` (monospaced variant).
