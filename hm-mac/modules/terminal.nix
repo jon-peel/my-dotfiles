@@ -16,7 +16,7 @@
       extraConfig = ''
         local config = wezterm.config_builder()
 
-        config.font = wezterm.font 'JetBrainsMono Nerd Font Mono'
+        config.font = wezterm.font 'JetBrainsMono NFM'
         config.font_size = 12.0
 
         -- Automatic dark/light theme based on macOS appearance
