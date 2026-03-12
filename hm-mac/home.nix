@@ -9,9 +9,9 @@
 
   programs.git = {
     enable = true;
-    userName = "Jonathan Peel";
-    userEmail = "me@jonathanpeel.co.za";
-    extraConfig = {
+    settings = {
+      user.name = "Jonathan Peel";
+      user.email = "me@jonathanpeel.co.za";
       init.defaultBranch = "main";
       pull.rebase = true;
     };
