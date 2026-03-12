@@ -3,6 +3,7 @@
   imports = [
     ./modules/git.nix
     ./modules/shell.nix
+    ./modules/terminal.nix
   ];
 
   home.username = "me";
@@ -14,5 +15,6 @@
 
   my.git.enable = true;
   my.shell.enable = true;
+  my.terminal.enable = true;
 
 }
