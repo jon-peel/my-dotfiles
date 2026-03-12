@@ -11,6 +11,11 @@
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       defaultKeymap = "viins";
+      shellAliases = {
+        ls = "ls -G";
+        ll = "ls -lhG";
+        la = "ls -lahG";
+      };
     };
 
     programs.starship = {
