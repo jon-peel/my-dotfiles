@@ -1,6 +1,9 @@
 { ... }: {
 
-  imports = [ ./modules/git.nix ];
+  imports = [
+    ./modules/git.nix
+    ./modules/shell.nix
+  ];
 
   home.username = "me";
   home.homeDirectory = "/Users/me";
@@ -10,5 +13,6 @@
   programs.home-manager.enable = true;
 
   my.git.enable = true;
+  my.shell.enable = true;
 
 }
