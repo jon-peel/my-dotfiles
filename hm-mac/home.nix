@@ -1,4 +1,6 @@
-{ pkgs, ... }: {
+{ ... }: {
+
+  imports = [ ./modules/git.nix ];
 
   home.username = "me";
   home.homeDirectory = "/Users/me";
@@ -7,18 +9,6 @@
   # Let Home Manager manage itself
   programs.home-manager.enable = true;
 
-  programs.git = {
-    enable = true;
-    settings = {
-      user.name = "Jonathan Peel";
-      user.email = "me@jonathanpeel.co.za";
-      init.defaultBranch = "main";
-      pull.rebase = true;
-    };
-  };
-
-  programs.gh = {
-    enable = true;
-  };
+  my.git.enable = true;
 
 }
