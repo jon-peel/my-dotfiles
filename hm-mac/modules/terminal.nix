@@ -16,6 +16,7 @@
       extraConfig = ''
         local config = wezterm.config_builder()
 
+        config.font_dirs = { os.getenv('HOME') .. '/Library/Fonts/JetBrainsMonoNF' }
         config.font = wezterm.font 'JetBrainsMono NFM'
         config.font_size = 12.0
 
