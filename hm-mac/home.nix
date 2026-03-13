@@ -2,6 +2,7 @@
 
   imports = [
     ./modules/git.nix
+    ./modules/nix-apps.nix
     ./modules/shell.nix
     ./modules/terminal.nix
   ];
@@ -14,6 +15,7 @@
   programs.home-manager.enable = true;
 
   my.git.enable = true;
+  my.nixApps.enable = true;
   my.shell.enable = true;
   my.terminal.enable = true;
 

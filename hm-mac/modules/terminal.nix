@@ -11,13 +11,6 @@
       recursive = true;
     };
 
-    # Symlink ~/.nix-profile/Applications into ~/Applications/nix
-    # so Spotlight can discover Nix-installed apps
-    home.activation.linkNixApps = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      mkdir -p "$HOME/Applications"
-      ln -sfn "$HOME/.nix-profile/Applications" "$HOME/Applications/nix"
-    '';
-
     programs.wezterm = {
       enable = true;
       extraConfig = ''
