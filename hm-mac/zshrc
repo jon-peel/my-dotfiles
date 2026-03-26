@@ -1,0 +1,47 @@
+typeset -U path cdpath fpath manpath
+for profile in ${(z)NIX_PROFILES}; do
+  fpath+=($profile/share/zsh/site-functions $profile/share/zsh/$ZSH_VERSION/functions $profile/share/zsh/vendor-completions)
+done
+
+HELPDIR="/nix/store/zf2c7aa7am9dbq9mbbpnsfs2qbv8639q-zsh-5.9/share/zsh/$ZSH_VERSION/help"
+
+# Use viins keymap as the default.
+bindkey -v
+
+autoload -U compinit && compinit
+source /nix/store/2kpjxpmxz52q893ahyjbz703apal0qk6-zsh-autosuggestions-0.7.1/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_STRATEGY=(history)
+
+
+# History options should be set in .zshrc and after oh-my-zsh sourcing.
+# See https://github.com/nix-community/home-manager/issues/177.
+HISTSIZE="10000"
+SAVEHIST="10000"
+
+HISTFILE="/Users/me/.zsh_history"
+mkdir -p "$(dirname "$HISTFILE")"
+
+# Set shell options
+set_opts=(
+  HIST_FCNTL_LOCK HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY
+  NO_APPEND_HISTORY NO_EXTENDED_HISTORY NO_HIST_EXPIRE_DUPS_FIRST
+  NO_HIST_FIND_NO_DUPS NO_HIST_IGNORE_ALL_DUPS NO_HIST_SAVE_NO_DUPS
+)
+for opt in "${set_opts[@]}"; do
+  setopt "$opt"
+done
+unset opt set_opts
+
+source "/nix/store/92c06a3dmlsvg2gg9wsk5bb2sz83x921-wezterm-0-unstable-2026-01-17/etc/profile.d/wezterm.sh"
+
+if [[ $TERM != "dumb" ]]; then
+  eval "$(/nix/store/r4xwjdxc72fx9y5qy2hwwax18a5wmq2w-starship-1.24.2/bin/starship init zsh)"
+fi
+
+alias -- la='ls -lahG'
+alias -- ll='ls -lhG'
+alias -- ls='ls -G'
+source /nix/store/8jzhnsrc5mpw9qf8w1hflr92a7ca098z-zsh-syntax-highlighting-0.8.0/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
+
+

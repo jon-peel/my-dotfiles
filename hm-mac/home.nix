@@ -16,7 +16,7 @@
 
   my.git.enable = true;
   my.nixApps.enable = true;
-  my.shell.enable = true;
+  my.shell.enable = false;
   my.terminal.enable = true;
 
 }
