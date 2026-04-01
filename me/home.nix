@@ -12,6 +12,9 @@
     ./modules/my-i3.nix
     ./modules/my-docker.nix
     ./modules/my-git.nix
+    ./modules/my-browser.nix
+    ./modules/my-media.nix
+    ./modules/my-sysmon.nix
   ];
 
   home.username = "me";
@@ -26,20 +29,11 @@
   my.rider.enable = true;
   my.docker.enable = true;
   my.git.enable = true;
-
-  home.packages = with pkgs; [
-    btop
-    htop
-    vlc
-    veracrypt
-  ];
-
-  programs.firefox.enable = true;
+  my.browser.enable = true;
+  my.media.enable = true;
+  my.sysmon.enable = true;
 
   programs.bash.enable = true;
-
-  # dconf D-Bus service is unavailable in WSL — disable to prevent activation failure
-  dconf.enable = false;
 
   # Let home-manager manage itself
   programs.home-manager.enable = true;

@@ -8,6 +8,6 @@
   config = lib.mkIf config.my.docker.enable {
     virtualisation.docker.enable = true;
 
-    users.users.nixos.extraGroups = [ "docker" ];
+    users.users.me.extraGroups = [ "docker" ];
   };
 }

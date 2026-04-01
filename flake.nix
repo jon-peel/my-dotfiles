@@ -1,5 +1,5 @@
 {
-  description = "Home Manager user configuration";
+  description = "NixOS system and Home Manager configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
@@ -24,10 +24,18 @@
         overlays = [ claude-code-overlay.overlays.default ];
       };
     in {
-      homeConfigurations.nixos = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [ ./home.nix ];
-        extraSpecialArgs = { dotfilesDir = "/home/nixos/nixconfig/dotfiles"; };
+      nixosConfigurations.tuffy = nixpkgs.lib.nixosSystem {
+        inherit system pkgs;
+        modules = [
+          ./tuffy/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { dotfilesDir = "/home/me/dotfiles/dotfiles"; };
+            home-manager.users.me = import ./me/home.nix;
+          }
+        ];
       };
     };
 }
