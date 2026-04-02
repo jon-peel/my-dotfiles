@@ -28,14 +28,14 @@
         inherit system pkgs;
         modules = [
           ./tuffy/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { dotfilesDir = "/home/me/dotfiles/dotfiles"; };
-            home-manager.users.me = import ./me/home.nix;
-          }
+          { environment.systemPackages = [ home-manager.packages.${system}.default ]; }
         ];
+      };
+
+      homeConfigurations.me = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ ./me/home.nix ];
+        extraSpecialArgs = { dotfilesDir = "/home/me/dotfiles/dotfiles"; };
       };
     };
 }

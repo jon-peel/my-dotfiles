@@ -1,0 +1,70 @@
+conky.config = {
+    -- Window
+    own_window           = true,
+    own_window_type      = 'override',
+    own_window_hints     = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_argb_visual = true,
+    own_window_argb_value  = 210,
+    own_window_colour    = '1e1e2e',
+
+    -- Position
+    alignment = 'top_right',
+    gap_x     = 20,
+    gap_y     = 48,
+
+    -- Font / text
+    use_xft   = true,
+    font      = 'JetBrains Mono:size=9',
+    xftalpha  = 1,
+
+    -- Behaviour
+    background         = true,
+    update_interval    = 86400,
+    double_buffer      = true,
+    no_buffers         = true,
+    draw_borders       = false,
+    draw_outline       = false,
+    draw_shades        = false,
+
+    -- Colours
+    default_color = 'cdd6f4',
+};
+
+conky.text = [[
+${color b4befe}── i3 keys ─────────────────────────${color}
+
+${color f9e2af}Apps${color}
+  Super + Enter        terminal
+  Super + D            launcher
+
+${color f9e2af}Windows${color}
+  Super + Q            close
+  Super + F            fullscreen
+  Super + H            split side by side
+  Super + V            split top / bottom
+
+${color f9e2af}Focus${color}
+  Super + ←↑↓→         focus window
+
+${color f9e2af}Move${color}
+  Super + Shift + ←↑↓→  move window
+
+${color f9e2af}Layout${color}
+  Super + S            stacking
+  Super + W            tabbed
+  Super + E            split toggle
+  Super + Space        toggle focus float
+  Super + Shift+Space  toggle floating
+
+${color f9e2af}Workspaces${color}
+  Super + 1–5          switch workspace
+  Super + Shift + 1–5  move to workspace
+
+${color f9e2af}Resize  (Super + R)${color}
+  ←↑↓→                 resize window
+  Enter / Esc          exit resize
+
+${color f9e2af}Session${color}
+  Super + Shift + R    restart i3
+  Super + Shift + E    exit i3
+]];

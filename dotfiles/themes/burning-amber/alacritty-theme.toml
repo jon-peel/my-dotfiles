@@ -1,0 +1,33 @@
+# Burning Amber CRT — Alacritty colour theme
+
+[colors.primary]
+background = "#0D0800"
+foreground = "#FFB000"
+
+[colors.cursor]
+text   = "#0D0800"
+cursor = "#FF6600"
+
+[colors.selection]
+text       = "#0D0800"
+background = "#FFB000"
+
+[colors.normal]
+black   = "#1A0F00"
+red     = "#FF4400"
+green   = "#CC8800"
+yellow  = "#FFB000"
+blue    = "#FF8C00"
+magenta = "#FF6600"
+cyan    = "#FFAA00"
+white   = "#FFC940"
+
+[colors.bright]
+black   = "#3D2400"
+red     = "#FF6600"
+green   = "#FFB000"
+yellow  = "#FFC940"
+blue    = "#FFAA00"
+magenta = "#FF8C00"
+cyan    = "#FFD060"
+white   = "#FFE680"

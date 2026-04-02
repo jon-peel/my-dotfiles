@@ -13,6 +13,7 @@
     ./modules/my-docker.nix
     ./modules/my-git.nix
     ./modules/my-browser.nix
+    ./modules/my-theme-burning-amber.nix
     ./modules/my-media.nix
     ./modules/my-sysmon.nix
   ];
@@ -30,6 +31,7 @@
   my.docker.enable = true;
   my.git.enable = true;
   my.browser.enable = true;
+  my.theme.burningAmber.enable = true;
   my.media.enable = true;
   my.sysmon.enable = true;
 

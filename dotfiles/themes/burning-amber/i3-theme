@@ -1,0 +1,12 @@
+# Burning Amber CRT — i3 colour variables
+
+set $base     #0D0800
+set $surface  #1A0F00
+set $overlay  #3D2400
+set $text     #FFB000
+set $subtext  #7A5500
+set $blue     #FFB000
+set $lavender #FFC940
+set $green    #CC8800
+set $red      #FF4400
+set $yellow   #FFB000

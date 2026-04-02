@@ -1,31 +1,45 @@
 [theme]
-theme = "ctp-mocha"
+theme = "plain"
+
+[theme.overrides]
+idle_bg      = "#0D0800"
+idle_fg      = "#FFB000"
+info_bg      = "#0D0800"
+info_fg      = "#FFC940"
+good_bg      = "#0D0800"
+good_fg      = "#CC8800"
+warning_bg   = "#1A0F00"
+warning_fg   = "#FF6600"
+critical_bg  = "#FF4400"
+critical_fg  = "#0D0800"
+separator     = " ░ "
+separator_bg  = "#0D0800"
+separator_fg  = "#3D2400"
 
 [icons]
 icons = "material-nf"
 
 [[block]]
 block = "cpu"
-format = " $icon $utilization "
+format = " CPU $barchart $utilization "
 interval = 5
 
 [[block]]
 block = "memory"
-format = " $icon $mem_used_percents "
+format = " MEM $mem_used "
 interval = 5
-
-[[block]]
-block = "disk_space"
-path = "/"
-format = " $icon $available "
-interval = 20
 
 [[block]]
 block = "net"
-format = " $icon {$ssid |}{$signal_strength |}$speed_down.eng(prefix:K) $speed_up.eng(prefix:K) "
+format = " ↑ $speed_up.eng(prefix:K) ↓ $speed_down.eng(prefix:K) "
 interval = 5
 
 [[block]]
+block = "battery"
+format = " BAT $percentage "
+interval = 30
+
+[[block]]
 block = "time"
-format = " $icon $timestamp.datetime(f:'%a %d %b  %H:%M') "
-interval = 60
+format = " $timestamp.datetime(f:'%H:%M:%S') "
+interval = 1

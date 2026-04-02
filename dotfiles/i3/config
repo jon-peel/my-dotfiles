@@ -1,21 +1,9 @@
-# i3 config — Catppuccin Mocha theme
+# i3 config — base (colours injected by active theme module)
 # Mod key: Super (Windows key)
 set $mod Mod4
 
 # Font for window titles
-font pango:JetBrains Mono 10
-
-# ── Colour palette (Catppuccin Mocha) ─────────────────────────────────────────
-set $base     #1e1e2e
-set $surface  #313244
-set $overlay  #45475a
-set $text     #cdd6f4
-set $subtext  #a6adc8
-set $blue     #89b4fa
-set $lavender #b4befe
-set $green    #a6e3a1
-set $red      #f38ba8
-set $yellow   #f9e2af
+font pango:BlexMono Nerd Font Mono 10
 
 # Window border colours
 #                         border    background  text     indicator  child_border
@@ -36,7 +24,10 @@ bindsym $mod+v split v   # top / bottom
 
 # ── Launching apps ─────────────────────────────────────────────────────────────
 bindsym $mod+Return exec alacritty
-bindsym $mod+d      exec dmenu_run
+bindsym $mod+d      exec dmenu_run -nb '#0D0800' -nf '#FFB000' -sb '#FF8800' -sf '#0D0800' -fn 'IBM Plex Mono:size=10'
+
+# Force border on Alacritty (decorations=None suppresses it otherwise)
+for_window [class="Alacritty"] border pixel 2
 
 # ── Window management ──────────────────────────────────────────────────────────
 bindsym $mod+q kill
@@ -93,16 +84,22 @@ bindsym $mod+r mode "resize"
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec i3-msg exit
 
+# ── Startup ────────────────────────────────────────────────────────────────────
+exec_always --no-startup-id killall -q conky; sleep 0.5 && conky -c ~/.config/conky/i3-keys.conf & sleep 1 && xdotool search --class Conky windowlower
+
+
 # ── Status bar ─────────────────────────────────────────────────────────────────
 bar {
   position top
+  i3bar_command i3bar --transparency
   status_command i3status-rs ~/.config/i3status-rust/config.toml
-  font pango:JetBrainsMono Nerd Font 10
+  font pango:BlexMono Nerd Font Mono 9
+  separator_symbol "░"
 
   colors {
-    background $base
-    statusline $text
-    separator  $overlay
+    background         $base_bar
+    statusline         $text
+    separator          $overlay
 
     #                    border    background  text
     focused_workspace    $blue     $blue       $base

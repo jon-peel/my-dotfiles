@@ -1,0 +1,72 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """$os$directory$git_branch$git_status$nodejs$python$dotnet$rust$cmd_duration$status$line_break$character"""
+
+palette = 'burning_amber'
+
+[os]
+disabled = false
+format = "[$symbol ]($style)"
+style = "fg:overlay"
+
+[directory]
+format = "[$path ]($style)"
+style = "fg:hot"
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+format = "[ $symbol$branch ]($style)"
+symbol = " "
+style = "fg:amber"
+
+[git_status]
+format = "[$all_status$ahead_behind ]($style)"
+style = "fg:burn"
+
+[nodejs]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:amber"
+
+[python]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:hot"
+
+[dotnet]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:amber"
+
+[rust]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:burn"
+
+[cmd_duration]
+min_time = 2_000
+format = "[took $duration ]($style)"
+style = "fg:hot"
+
+[status]
+disabled = false
+format = "[$symbol$status ]($style)"
+symbol = "✘ "
+success_symbol = ""
+style = "fg:red"
+
+[character]
+success_symbol = "[❯](fg:amber)"
+error_symbol   = "[❯](fg:red)"
+
+[palettes.burning_amber]
+bg      = "#0D0800"
+surface = "#1A0F00"
+overlay = "#7A5500"
+dim     = "#CC8800"
+amber   = "#FFB000"
+hot     = "#FFC940"
+burn    = "#FF6600"
+glow    = "#FFE680"
+red     = "#FF4400"
