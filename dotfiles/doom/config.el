@@ -32,9 +32,14 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-font (font-spec :family "JetBrains Mono" :size 13))
+(setq doom-font (font-spec :family "BlexMono Nerd Font" :size 13))
 
-(setq doom-theme 'doom-one)
+;; Load theme from Nix theme module if present, otherwise fall back to doom-one.
+;; ~/.doom-theme.el is written by my-theme-burning-amber.nix when enabled.
+(let ((theme-file (expand-file-name "~/.doom-theme.el")))
+  (if (file-exists-p theme-file)
+      (load-file theme-file)
+    (setq doom-theme 'doom-one)))
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.

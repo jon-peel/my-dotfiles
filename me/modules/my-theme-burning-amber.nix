@@ -84,8 +84,20 @@
         source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/themes/burning-amber/starship.toml";
       };
 
+      home.file.".doom-theme.el" = {
+        source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/themes/burning-amber/doom-theme.el";
+      };
+
       home.file.".config/conky/i3-keys.conf" = {
         source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/themes/burning-amber/conky.conf";
+      };
+
+      home.pointerCursor = {
+        package  = pkgs.bibata-cursors;
+        name     = "Bibata-Modern-Amber";
+        size     = 24;
+        gtk.enable = true;
+        x11.enable = true;
       };
 
       gtk = {
@@ -356,7 +368,7 @@
         glx-copy-from-front = false;
 
         # CRT scanline shader — comment this line to run compositor without the effect
-        window-shader-fg = "~/.config/picom/scanline.glsl";
+        window-shader-fg = "${config.home.homeDirectory}/.config/picom/scanline.glsl";
 
         shadow = false;
         fading = false;
@@ -365,17 +377,37 @@
       home.file.".config/picom/scanline.glsl".text = ''
         #version 130
 
-        in  vec2      texcoord;
         uniform sampler2D tex;
         uniform float     opacity;
+        in vec2           texcoord;  /* pixel coordinates */
 
-        void main() {
-            vec4  c        = texture2D(tex, texcoord);
-            // Alternate rows: even rows are slightly dimmed to simulate CRT scanlines.
-            // Adjust the mix ratio (0.72) to taste — lower = darker bands.
-            float even     = mod(floor(gl_FragCoord.y), 2.0);
-            float bright   = mix(0.72, 1.0, even);
-            gl_FragColor   = vec4(c.rgb * bright, c.a * opacity);
+        vec4 default_post_processing(vec4 c);
+
+        // ── Tuning ────────────────────────────────────────────────────────────
+        // Scanlines: dim level for dark rows  (0.0 = black, 1.0 = off)
+        const float SCANLINE_DARK     = 0.72;
+        // Vignette: edge darkening strength   (0.0 = off, 3.0 = very heavy)
+        const float VIGNETTE_STRENGTH = 1.5;
+        // Chromatic aberration: UV offset     (0.0 = off, 0.01 = obvious)
+        const float CA_OFFSET         = 0.0015;
+
+        vec4 window_shader() {
+            vec2 uv = texcoord / vec2(textureSize(tex, 0));
+
+            // ── Chromatic aberration ──────────────────────────────────────────
+            float r = texture2D(tex, vec2(uv.x - CA_OFFSET, uv.y)).r;
+            float g = texture2D(tex, uv).g;
+            float b = texture2D(tex, vec2(uv.x + CA_OFFSET, uv.y)).b;
+            vec4  c = vec4(r, g, b, texture2D(tex, uv).a);
+
+            // ── Scanlines ─────────────────────────────────────────────────────
+            c.rgb *= mix(SCANLINE_DARK, 1.0, mod(floor(gl_FragCoord.y), 2.0));
+
+            // ── Vignette ──────────────────────────────────────────────────────
+            vec2  v = uv - 0.5;
+            c.rgb  *= clamp(1.0 - dot(v, v) * VIGNETTE_STRENGTH, 0.0, 1.0);
+
+            return default_post_processing(c);
         }
       '';
     })
