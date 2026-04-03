@@ -41,6 +41,7 @@
         ${lib.optionalString config.my.theme.burningAmber.picom ''
           exec_always --no-startup-id killall -q picom; sleep 0.3 && picom --config ~/.config/picom/picom.conf -b
         ''}
+        exec --no-startup-id xscreensaver -no-splash
       '';
 
       home.file.".config/alacritty/theme.toml".text = ''
@@ -80,6 +81,31 @@
         white   = "#FFE680"   # near-white amber
       '';
 
+      home.packages = with pkgs; [ 
+      ];
+
+      home.file.".xscreensaver-notwork".text = ''
+        timeout:        0:10:00
+        lock:           True
+        lockTimeout:    0:00:00
+        passwdTimeout:  0:00:30
+        fade:           True
+        fadeSeconds:    0:00:03
+        fadeTicks:      20
+        splash:         False
+        mode:           one
+        selected:       0
+
+        programs: \
+            matrix -root \n\
+
+        *matrix.color:          #FFB000
+        *matrix.background:     #000000
+        *matrix.delay:          25000
+        *matrix.density:        25
+        *matrix.speed:          1.0
+      '';
+
       home.file.".config/starship.toml" = {
         source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/themes/burning-amber/starship.toml";
       };
@@ -93,9 +119,9 @@
       };
 
       home.pointerCursor = {
-        package  = pkgs.bibata-cursors;
-        name     = "Bibata-Modern-Amber";
-        size     = 24;
+        package    = pkgs.vanilla-dmz;
+        name       = "DMZ-Black";
+        size       = 24;
         gtk.enable = true;
         x11.enable = true;
       };
@@ -370,6 +396,13 @@
         # CRT scanline shader — comment this line to run compositor without the effect
         window-shader-fg = "${config.home.homeDirectory}/.config/picom/scanline.glsl";
 
+        # Exempt specific windows from the CRT shader (plain passthrough)
+        window-shader-fg-rule = [
+          "${config.home.homeDirectory}/.config/picom/passthrough.glsl:class_g = 'vlc'",
+          "${config.home.homeDirectory}/.config/picom/passthrough.glsl:class_g = '.virt-manager-wrapped'",
+          "${config.home.homeDirectory}/.config/picom/passthrough.glsl:_NET_WM_STATE@:32a *= '_NET_WM_STATE_FULLSCREEN'"
+        ];
+
         shadow = false;
         fading = false;
       '';
@@ -387,18 +420,41 @@
         // Scanlines: dim level for dark rows  (0.0 = black, 1.0 = off)
         const float SCANLINE_DARK     = 0.72;
         // Vignette: edge darkening strength   (0.0 = off, 3.0 = very heavy)
-        const float VIGNETTE_STRENGTH = 1.5;
+        const float VIGNETTE_STRENGTH = 1.1;
         // Chromatic aberration: UV offset     (0.0 = off, 0.01 = obvious)
-        const float CA_OFFSET         = 0.0015;
+        const float CA_OFFSET         = 0.00075;
+        // Phosphor glow: bloom intensity      (0.0 = off, 1.0 = heavy)
+        const float GLOW_STRENGTH     = 0.25;
+        // Phosphor glow: spread in pixels
+        const float GLOW_RADIUS       = 3.0;
 
         vec4 window_shader() {
-            vec2 uv = texcoord / vec2(textureSize(tex, 0));
+            vec2 texSize = vec2(textureSize(tex, 0));
+            vec2 uv      = texcoord / texSize;
 
             // ── Chromatic aberration ──────────────────────────────────────────
             float r = texture2D(tex, vec2(uv.x - CA_OFFSET, uv.y)).r;
             float g = texture2D(tex, uv).g;
             float b = texture2D(tex, vec2(uv.x + CA_OFFSET, uv.y)).b;
             vec4  c = vec4(r, g, b, texture2D(tex, uv).a);
+
+            // ── Phosphor glow ─────────────────────────────────────────────────
+            // 8-tap blur around the pixel, extract bright areas, tint amber
+            vec2 px   = GLOW_RADIUS / texSize;
+            vec4 blur = vec4(0.0);
+            blur += texture2D(tex, uv + vec2(-px.x,  0.0 )) * 0.20;
+            blur += texture2D(tex, uv + vec2( px.x,  0.0 )) * 0.20;
+            blur += texture2D(tex, uv + vec2( 0.0,  -px.y)) * 0.20;
+            blur += texture2D(tex, uv + vec2( 0.0,   px.y)) * 0.20;
+            blur += texture2D(tex, uv + vec2(-px.x, -px.y)) * 0.05;
+            blur += texture2D(tex, uv + vec2( px.x, -px.y)) * 0.05;
+            blur += texture2D(tex, uv + vec2(-px.x,  px.y)) * 0.05;
+            blur += texture2D(tex, uv + vec2( px.x,  px.y)) * 0.05;
+            float lum      = dot(blur.rgb, vec3(0.299, 0.587, 0.114));
+            float glowMask = smoothstep(0.3, 0.9, lum);
+            vec3  amber    = vec3(1.0, 0.69, 0.0);  // #FFB000
+            c.rgb += blur.rgb * amber * glowMask * GLOW_STRENGTH;
+            c.rgb  = clamp(c.rgb, 0.0, 1.0);
 
             // ── Scanlines ─────────────────────────────────────────────────────
             c.rgb *= mix(SCANLINE_DARK, 1.0, mod(floor(gl_FragCoord.y), 2.0));
@@ -408,6 +464,21 @@
             c.rgb  *= clamp(1.0 - dot(v, v) * VIGNETTE_STRENGTH, 0.0, 1.0);
 
             return default_post_processing(c);
+        }
+      '';
+
+      home.file.".config/picom/passthrough.glsl".text = ''
+        #version 130
+
+        uniform sampler2D tex;
+        uniform float     opacity;
+        in vec2           texcoord;
+
+        vec4 default_post_processing(vec4 c);
+
+        vec4 window_shader() {
+            vec2 uv = texcoord / vec2(textureSize(tex, 0));
+            return default_post_processing(texture2D(tex, uv));
         }
       '';
     })

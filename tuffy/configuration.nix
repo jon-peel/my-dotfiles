@@ -69,6 +69,14 @@
   ];
 
   programs.nix-ld.enable = true;
+
+  # xscreensaver needs setuid to prevent OOM killer unlocking the screen
+  security.wrappers.xscreensaver-auth = {
+    source = "${pkgs.xscreensaver}/libexec/xscreensaver/xscreensaver-auth";
+    setuid = true;
+    owner  = "root";
+    group  = "root";
+  };
   time.timeZone = "Europe/Moscow";
   i18n.defaultLocale = "en_ZA.UTF-8";
 
@@ -95,7 +103,7 @@
   users.users.me = {
     isNormalUser = true;
     description = "Jonathan Peel";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "video" "audio" "networkmanager" "wheel" ];
     shell = pkgs.zsh;
   };
 

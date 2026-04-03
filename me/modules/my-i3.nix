@@ -7,6 +7,7 @@
 
   config = lib.mkIf config.my.i3.enable {
     home.packages = with pkgs; [
+      autotiling-rs
       alacritty        # terminal — reliable under xrdp
       i3status-rust    # status bar backend
       dmenu            # app launcher (Mod+d)

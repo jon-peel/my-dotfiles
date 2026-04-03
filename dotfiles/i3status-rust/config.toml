@@ -12,9 +12,9 @@ warning_bg   = "#1A0F00"
 warning_fg   = "#FF6600"
 critical_bg  = "#FF4400"
 critical_fg  = "#0D0800"
-separator     = " ░ "
+separator     = "░"
 separator_bg  = "#0D0800"
-separator_fg  = "#3D2400"
+separator_fg  = "#A67C52"  #"#3D2400"
 
 [icons]
 icons = "material-nf"
@@ -23,11 +23,33 @@ icons = "material-nf"
 block = "cpu"
 format = " CPU $barchart $utilization "
 interval = 5
+[[block.click]]
+button = "left"
+cmd = "alacritty -e htop -s PERCENT_CPU"
 
 [[block]]
 block = "memory"
 format = " MEM $mem_used "
 interval = 5
+[[block.click]]
+button = "left"
+cmd = "alacritty -e htop -s PERCENT_MEM"
+
+[[block]]
+block = "disk_space"
+path = "/"
+[[block.click]]
+button = "left"
+cmd = "alacritty -e ncdu /"
+
+[[block]]
+block = "net"
+device = "wlo1"
+format = " $icon $ssid $signal_strength "
+interval = 5
+[[block.click]]
+button = "left"
+cmd = "alacritty -e nmtui"
 
 [[block]]
 block = "net"
@@ -35,11 +57,24 @@ format = " ↑ $speed_up.eng(prefix:K) ↓ $speed_down.eng(prefix:K) "
 interval = 5
 
 [[block]]
+block = "sound"
+driver = "pulseaudio"
+[[block.click]]
+button = "left"
+cmd = "alacritty -e pulsemixer"
+
+[[block]]
 block = "battery"
 format = " BAT $percentage "
 interval = 30
+[[block.click]]
+button = "left"
+cmd = "alacritty -e sudo powertop" # Note: requires sudo
 
 [[block]]
 block = "time"
 format = " $timestamp.datetime(f:'%H:%M:%S') "
 interval = 1
+[[block.click]]
+button = "left"
+cmd = "alacritty -e calcurse"

@@ -56,6 +56,13 @@ bindsym $mod+e layout toggle split
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space       focus mode_toggle
 
+# ── A/V ────────────────────────────────────────────────────────────────────────
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+
 # ── Workspaces ─────────────────────────────────────────────────────────────────
 bindsym $mod+1 workspace number 1
 bindsym $mod+2 workspace number 2
@@ -86,6 +93,7 @@ bindsym $mod+Shift+e exec i3-msg exit
 
 # ── Startup ────────────────────────────────────────────────────────────────────
 exec_always --no-startup-id killall -q conky; sleep 0.5 && conky -c ~/.config/conky/i3-keys.conf & sleep 1 && xdotool search --class Conky windowlower
+exec_always --no-startup-id autotiling-rs
 
 
 # ── Status bar ─────────────────────────────────────────────────────────────────

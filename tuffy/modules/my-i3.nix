@@ -11,6 +11,18 @@
       windowManager.i3.enable = true;
     };
 
+    environment.systemPackages = with pkgs; [
+      alsa-utils
+      btop
+      brightnessctl
+      calcurse
+      ncdu
+      powertop
+      pulseaudio
+      pulsemixer
+      xscreensaver
+    ];
+
     services.xrdp.defaultWindowManager =
       let
         startScript = pkgs.writeShellScript "xrdp-i3-session" ''
