@@ -3,6 +3,92 @@
 let
   cfg = config.my.theme.crt;
 
+  # ── Picom GLSL shaders ─────────────────────────────────────────────────────
+
+  darkScanlineGlsl = ''
+    #version 130
+
+    uniform sampler2D tex;
+    uniform float     opacity;
+    in vec2           texcoord;
+
+    vec4 default_post_processing(vec4 c);
+
+    // ── Tuning ────────────────────────────────────────────────────────────
+    const float SCANLINE_DARK     = 0.72;
+    const float VIGNETTE_STRENGTH = 1.1;
+    const float CA_OFFSET         = 0.00075;
+    const float GLOW_STRENGTH     = 0.25;
+    const float GLOW_RADIUS       = 3.0;
+
+    vec4 window_shader() {
+        vec2 texSize = vec2(textureSize(tex, 0));
+        vec2 uv      = texcoord / texSize;
+
+        // ── Chromatic aberration ──────────────────────────────────────────
+        float r = texture2D(tex, vec2(uv.x - CA_OFFSET, uv.y)).r;
+        float g = texture2D(tex, uv).g;
+        float b = texture2D(tex, vec2(uv.x + CA_OFFSET, uv.y)).b;
+        vec4  c = vec4(r, g, b, texture2D(tex, uv).a);
+
+        // ── Phosphor glow ─────────────────────────────────────────────────
+        vec2 px   = GLOW_RADIUS / texSize;
+        vec4 blur = vec4(0.0);
+        blur += texture2D(tex, uv + vec2(-px.x,  0.0 )) * 0.20;
+        blur += texture2D(tex, uv + vec2( px.x,  0.0 )) * 0.20;
+        blur += texture2D(tex, uv + vec2( 0.0,  -px.y)) * 0.20;
+        blur += texture2D(tex, uv + vec2( 0.0,   px.y)) * 0.20;
+        blur += texture2D(tex, uv + vec2(-px.x, -px.y)) * 0.05;
+        blur += texture2D(tex, uv + vec2( px.x, -px.y)) * 0.05;
+        blur += texture2D(tex, uv + vec2(-px.x,  px.y)) * 0.05;
+        blur += texture2D(tex, uv + vec2( px.x,  px.y)) * 0.05;
+        float lum      = dot(blur.rgb, vec3(0.299, 0.587, 0.114));
+        float glowMask = smoothstep(0.3, 0.9, lum);
+        vec3  amber    = vec3(1.0, 0.69, 0.0);
+        c.rgb += blur.rgb * amber * glowMask * GLOW_STRENGTH;
+        c.rgb  = clamp(c.rgb, 0.0, 1.0);
+
+        // ── Scanlines ─────────────────────────────────────────────────────
+        c.rgb *= mix(SCANLINE_DARK, 1.0, mod(floor(gl_FragCoord.y), 2.0));
+
+        // ── Vignette ──────────────────────────────────────────────────────
+        vec2  v = uv - 0.5;
+        c.rgb  *= clamp(1.0 - dot(v, v) * VIGNETTE_STRENGTH, 0.0, 1.0);
+
+        return default_post_processing(c);
+    }
+  '';
+
+  lightScanlineGlsl = ''
+    #version 130
+
+    uniform sampler2D tex;
+    uniform float     opacity;
+    in vec2           texcoord;
+
+    vec4 default_post_processing(vec4 c);
+
+    // ── Tuning ────────────────────────────────────────────────────────────
+    const float SCANLINE_DARK     = 0.88;
+    const float VIGNETTE_STRENGTH = 0.4;
+
+    vec4 window_shader() {
+        vec2 texSize = vec2(textureSize(tex, 0));
+        vec2 uv      = texcoord / texSize;
+
+        vec4 c = texture2D(tex, uv);
+
+        // ── Scanlines ─────────────────────────────────────────────────────
+        c.rgb *= mix(SCANLINE_DARK, 1.0, mod(floor(gl_FragCoord.y), 2.0));
+
+        // ── Vignette ──────────────────────────────────────────────────────
+        vec2  v = uv - 0.5;
+        c.rgb  *= clamp(1.0 - dot(v, v) * VIGNETTE_STRENGTH, 0.0, 1.0);
+
+        return default_post_processing(c);
+    }
+  '';
+
   # ── i3 colour variable blocks ───────────────────────────────────────────────
 
   darkI3Colors = ''
@@ -740,6 +826,12 @@ let
     cp -f "$THEMES/active/alacritty-theme.toml" \
           "$HOME/.config/alacritty/live-theme.toml" 2>/dev/null || true
 
+    # 7. Wallpaper — set explicitly here so it is not subject to exec_always
+    #    timing relative to i3bar restart during reload
+    if [[ -n "''${DISPLAY:-}" ]]; then
+      feh --bg-fill "$THEMES/active/wallpaper.png" 2>/dev/null || true
+    fi
+
     echo "Switched to $VARIANT theme."
   '';
 
@@ -785,6 +877,7 @@ in
         source = config.lib.file.mkOutOfStoreSymlink
           "${dotfilesDir}/themes/burning-amber/scanlines.png";
       };
+      home.file.".config/crt-themes/dark/scanline.glsl".text = darkScanlineGlsl;
 
       # ── Light theme files ──────────────────────────────────────────────────
       home.file.".config/crt-themes/light/i3-colors".text          = lightI3Colors;
@@ -805,10 +898,10 @@ in
           "${dotfilesDir}/themes/phosphor-green/doom-theme.el";
       };
       home.file.".config/crt-themes/light/wallpaper.png" = {
-        # Reuse dark scanlines for now; swap for a light-mode PNG later
         source = config.lib.file.mkOutOfStoreSymlink
-          "${dotfilesDir}/themes/burning-amber/scanlines.png";
+          "${dotfilesDir}/themes/phosphor-green/scanlines.png";
       };
+      home.file.".config/crt-themes/light/scanline.glsl".text = lightScanlineGlsl;
 
       # ── i3 config stub (colour vars injected via include) ──────────────────
       home.file.".config/i3/config".text = ''
@@ -932,7 +1025,7 @@ in
         glx-no-stencil      = true;
         glx-copy-from-front = false;
 
-        window-shader-fg = "${config.home.homeDirectory}/.config/picom/scanline.glsl";
+        window-shader-fg = "${config.home.homeDirectory}/.config/crt-themes/active/scanline.glsl";
 
         window-shader-fg-rule = [
           "${config.home.homeDirectory}/.config/picom/passthrough.glsl:class_g = 'vlc'",
@@ -944,59 +1037,8 @@ in
         fading = false;
       '';
 
-      home.file.".config/picom/scanline.glsl".text = ''
-        #version 130
-
-        uniform sampler2D tex;
-        uniform float     opacity;
-        in vec2           texcoord;
-
-        vec4 default_post_processing(vec4 c);
-
-        // ── Tuning ────────────────────────────────────────────────────────────
-        const float SCANLINE_DARK     = 0.72;
-        const float VIGNETTE_STRENGTH = 1.1;
-        const float CA_OFFSET         = 0.00075;
-        const float GLOW_STRENGTH     = 0.25;
-        const float GLOW_RADIUS       = 3.0;
-
-        vec4 window_shader() {
-            vec2 texSize = vec2(textureSize(tex, 0));
-            vec2 uv      = texcoord / texSize;
-
-            // ── Chromatic aberration ──────────────────────────────────────────
-            float r = texture2D(tex, vec2(uv.x - CA_OFFSET, uv.y)).r;
-            float g = texture2D(tex, uv).g;
-            float b = texture2D(tex, vec2(uv.x + CA_OFFSET, uv.y)).b;
-            vec4  c = vec4(r, g, b, texture2D(tex, uv).a);
-
-            // ── Phosphor glow ─────────────────────────────────────────────────
-            vec2 px   = GLOW_RADIUS / texSize;
-            vec4 blur = vec4(0.0);
-            blur += texture2D(tex, uv + vec2(-px.x,  0.0 )) * 0.20;
-            blur += texture2D(tex, uv + vec2( px.x,  0.0 )) * 0.20;
-            blur += texture2D(tex, uv + vec2( 0.0,  -px.y)) * 0.20;
-            blur += texture2D(tex, uv + vec2( 0.0,   px.y)) * 0.20;
-            blur += texture2D(tex, uv + vec2(-px.x, -px.y)) * 0.05;
-            blur += texture2D(tex, uv + vec2( px.x, -px.y)) * 0.05;
-            blur += texture2D(tex, uv + vec2(-px.x,  px.y)) * 0.05;
-            blur += texture2D(tex, uv + vec2( px.x,  px.y)) * 0.05;
-            float lum      = dot(blur.rgb, vec3(0.299, 0.587, 0.114));
-            float glowMask = smoothstep(0.3, 0.9, lum);
-            vec3  amber    = vec3(1.0, 0.69, 0.0);
-            c.rgb += blur.rgb * amber * glowMask * GLOW_STRENGTH;
-            c.rgb  = clamp(c.rgb, 0.0, 1.0);
-
-            // ── Scanlines ─────────────────────────────────────────────────────
-            c.rgb *= mix(SCANLINE_DARK, 1.0, mod(floor(gl_FragCoord.y), 2.0));
-
-            // ── Vignette ──────────────────────────────────────────────────────
-            vec2  v = uv - 0.5;
-            c.rgb  *= clamp(1.0 - dot(v, v) * VIGNETTE_STRENGTH, 0.0, 1.0);
-
-            return default_post_processing(c);
-        }
-      '';
+      # scanline.glsl lives in each theme directory (dark/light) and is
+      # symlinked through active/ — picom.conf points there directly.
 
       home.file.".config/picom/passthrough.glsl".text = ''
         #version 130
