@@ -56,9 +56,6 @@
   my.tailscale.enable = true;
   my.windowmaker.enable = true;
 
-  services.input-leap.enable = true;
-  # networking.firewall.allowedTCPPort = [ 24800 ];
-
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     trusted-users = [ "root" "me" ];
@@ -69,7 +66,17 @@
     vim
     wget
     distrobox
+deskflow 
   ];
+
+  #services.deskflow.client = {
+  #  enable = true;
+  #  server = "192.168.0.13";
+  #};
+  networking.firewall.allowedTCPPorts = [ 24800 ];
+  networking.firewall.allowedUDPPorts = [ 24800 ];
+
+
 
   programs.nix-ld.enable = true;
 

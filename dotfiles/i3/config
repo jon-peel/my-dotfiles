@@ -12,7 +12,7 @@ font pango:BlexMono Nerd Font Mono 10
 # Thin borders + gaps
 default_border pixel 2
 gaps inner 8
-gaps outer 4
+gaps outer 2
 
 # ── Splitting ──────────────────────────────────────────────────────────────────
 # Focus the window you want to split, press one of these, then open an app.
