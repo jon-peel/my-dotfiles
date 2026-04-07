@@ -1,0 +1,72 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """$os$directory$git_branch$git_status$nodejs$python$dotnet$rust$cmd_duration$status$line_break$character"""
+
+palette = 'phosphor_green'
+
+[os]
+disabled = false
+format = "[$symbol ]($style)"
+style = "fg:overlay"
+
+[directory]
+format = "[$path ]($style)"
+style = "fg:hot"
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+format = "[ $symbol$branch ]($style)"
+symbol = " "
+style = "fg:green"
+
+[git_status]
+format = "[$all_status$ahead_behind ]($style)"
+style = "fg:burn"
+
+[nodejs]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:green"
+
+[python]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:hot"
+
+[dotnet]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:green"
+
+[rust]
+format = "[ $symbol$version ]($style)"
+symbol = " "
+style = "fg:burn"
+
+[cmd_duration]
+min_time = 2_000
+format = "[took $duration ]($style)"
+style = "fg:hot"
+
+[status]
+disabled = false
+format = "[$symbol$status ]($style)"
+symbol = "✘ "
+success_symbol = ""
+style = "fg:red"
+
+[character]
+success_symbol = "[❯](fg:green)"
+error_symbol   = "[❯](fg:red)"
+
+[palettes.phosphor_green]
+bg      = "#D8EDD8"
+surface = "#C8DCC8"
+overlay = "#557755"
+dim     = "#3D6040"
+green   = "#007700"
+hot     = "#009900"
+burn    = "#005500"
+glow    = "#AADDAA"
+red     = "#AA2200"

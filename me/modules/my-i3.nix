@@ -26,9 +26,10 @@
       source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/alacritty/alacritty.toml";
     };
 
-    home.file.".config/i3status-rust" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/i3status-rust";
-    };
+    # i3status-rust config.toml is managed by the crt-theme activation script
+    # (symlinked through ~/.config/crt-themes/active/i3status-rust.toml).
+    # Keep the directory as a real dir so the symlink can be placed inside it.
+    home.file.".config/i3status-rust/.keep".text = "";
 
   };
 }

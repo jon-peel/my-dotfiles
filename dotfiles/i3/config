@@ -5,12 +5,9 @@ set $mod Mod4
 # Font for window titles
 font pango:BlexMono Nerd Font Mono 10
 
-# Window border colours
-#                         border    background  text     indicator  child_border
-client.focused            $blue     $blue       $base    $lavender  $blue
-client.focused_inactive   $overlay  $surface    $text    $overlay   $overlay
-client.unfocused          $overlay  $base       $subtext $overlay   $overlay
-client.urgent             $red      $red        $base    $red       $red
+# Window border colours are set in the theme's i3-colors file (included before
+# this file) — i3 does not expand include-defined vars in client.* directives
+# in other files, so they must live alongside their set declarations.
 
 # Thin borders + gaps
 default_border pixel 2
@@ -92,27 +89,10 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec i3-msg exit
 
 # ── Startup ────────────────────────────────────────────────────────────────────
-exec_always --no-startup-id killall -q conky; sleep 0.5 && conky -c ~/.config/conky/i3-keys.conf & sleep 1 && xdotool search --class Conky windowlower
+exec_always --no-startup-id killall -q conky; sleep 0.5 && conky -c ~/.config/crt-themes/active/conky.conf & sleep 1 && xdotool search --class Conky windowlower
 exec_always --no-startup-id autotiling-rs
 
 
 # ── Status bar ─────────────────────────────────────────────────────────────────
-bar {
-  position top
-  i3bar_command i3bar --transparency
-  status_command i3status-rs ~/.config/i3status-rust/config.toml
-  font pango:BlexMono Nerd Font Mono 9
-  separator_symbol "░"
-
-  colors {
-    background         $base_bar
-    statusline         $text
-    separator          $overlay
-
-    #                    border    background  text
-    focused_workspace    $blue     $blue       $base
-    active_workspace     $surface  $surface    $text
-    inactive_workspace   $base     $base       $subtext
-    urgent_workspace     $red      $red        $base
-  }
-}
+# bar {} block lives in ~/.config/crt-themes/active/i3-colors (hardcoded hex
+# colours — i3bar receives bar config via IPC without variable substitution)

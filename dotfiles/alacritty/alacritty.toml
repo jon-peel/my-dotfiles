@@ -1,7 +1,7 @@
 # Alacritty config — Burning Amber CRT theme
 
 [general]
-import = ["~/.config/alacritty/theme.toml"]
+import = ["~/.config/alacritty/live-theme.toml"]
 
 [font]
 normal = { family = "BlexMono Nerd Font", style = "Regular" }

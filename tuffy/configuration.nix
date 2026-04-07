@@ -56,6 +56,9 @@
   my.tailscale.enable = true;
   my.windowmaker.enable = true;
 
+  services.input-leap.enable = true;
+  # networking.firewall.allowedTCPPort = [ 24800 ];
+
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     trusted-users = [ "root" "me" ];
