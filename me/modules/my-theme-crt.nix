@@ -103,6 +103,7 @@ let
     set $red      #FF4400
     set $yellow   #FFB000
     set $base_bar #0D0800B0
+    bindsym Mod4+d exec dmenu_run -nb '#0D0800' -nf '#FFB000' -sb '#FFB000' -sf '#0D0800' -fn 'IBM Plex Mono:size=14'
 
     # client.* must live in the same included file as the set vars —
     # i3 does not substitute include-defined vars into client.* in other files
@@ -116,11 +117,11 @@ let
       position top
       i3bar_command i3bar --transparency
       status_command i3status-rs ~/.config/crt-themes/dark/i3status-rust.toml
-      font pango:BlexMono Nerd Font Mono 9
+      font pango:BlexMono Nerd Font Mono 11
       separator_symbol "░"
 
       colors {
-        background         #0D0800B0
+        background         #00000000
         statusline         #FFB000
         separator          #3D2400
 
@@ -139,12 +140,13 @@ let
     set $overlay  #557755
     set $text     #1A3520
     set $subtext  #3D6040
-    set $blue     #007700
-    set $lavender #009900
+    set $blue     #33FF33
+    set $lavender #77FF77
     set $green    #005500
     set $red      #AA2200
     set $yellow   #007700
     set $base_bar #557755B0
+    bindsym Mod4+d exec dmenu_run -nb '#D8EDD8' -nf '#1A3520' -sb '#33FF33' -sf '#D8EDD8' -fn 'IBM Plex Mono:size=14'
 
     #                         border    background  text     indicator  child_border
     client.focused            $blue     $blue       $base    $lavender  $blue
@@ -156,11 +158,11 @@ let
       position top
       i3bar_command i3bar --transparency
       status_command i3status-rs ~/.config/crt-themes/light/i3status-rust.toml
-      font pango:BlexMono Nerd Font Mono 9
+      font pango:BlexMono Nerd Font Mono 11
       separator_symbol "░"
 
       colors {
-        background         #557755B0
+        background         #00000000
         statusline         #1A3520
         separator          #557755
 
