@@ -32,10 +32,30 @@
         ];
       };
 
-      homeConfigurations.me = home-manager.lib.homeManagerConfiguration {
+      nixosConfigurations.ideapad = nixpkgs.lib.nixosSystem {
+        inherit system pkgs;
+        modules = [
+          ./ideapad/configuration.nix
+          { environment.systemPackages = [ home-manager.packages.${system}.default ]; }
+        ];
+      };
+
+      homeConfigurations."me@tuffy" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [ ./me/home.nix ];
-        extraSpecialArgs = { dotfilesDir = "/home/me/dotfiles/dotfiles"; };
+        extraSpecialArgs = {
+          dotfilesDir = "/home/me/dotfiles/dotfiles";
+          hostname = "tuffy";
+        };
+      };
+
+      homeConfigurations."me@ideapad" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ ./me/home.nix ];
+        extraSpecialArgs = {
+          dotfilesDir = "/home/me/dotfiles/dotfiles";
+          hostname = "ideapad";
+        };
       };
     };
 }
