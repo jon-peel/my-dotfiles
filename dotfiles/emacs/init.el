@@ -24,19 +24,19 @@
 (set-face-attribute 'variable-pitch nil :family "Helvetica Neue" :height 1.0)
 
 
+;;; Org-mode
 (with-eval-after-load 'org
   (set-face-attribute 'org-level-1 nil :height 1.6)
   (set-face-attribute 'org-level-2 nil :height 1.4)
   (set-face-attribute 'org-level-3 nil :height 1.2)
   (set-face-attribute 'org-level-4 nil :height 1.1)
-  (set-face-attribute 'org-level-5 nil :height 1.0)
-  (set-face-attribute 'org-level-6 nil :height 1.0)
-  (set-face-attribute 'org-level-7 nil :height 1.0)
-  (set-face-attribute 'org-level-8 nil :height 1.0))
+  (dolist (face '(org-level-5 org-level-6 org-level-7 org-level-8))
+    (set-face-attribute face nil :height 1.0))
+  (dolist (face '(org-block org-table org-formula org-code
+                  org-verbatim org-special-keyword org-meta-line org-checkbox))
+    (set-face-attribute face nil :inherit 'fixed-pitch)))
 
-;;; Org-mode — mixed-pitch keeps body in variable-pitch, code/tables in fixed-pitch
-(use-package mixed-pitch
-  :hook (org-mode . mixed-pitch-mode))
+(add-hook 'org-mode-hook #'variable-pitch-mode)
 
 ;;; Vertico — minibuffer completion UI
 (use-package vertico
@@ -142,15 +142,3 @@
   :config
   (meow-setup)
   (meow-global-mode 1))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(meow)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
