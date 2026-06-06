@@ -1,5 +1,9 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+;;; Keep Emacs custom writes out of init.el
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(load custom-file :no-error)
+
 ;;; Package bootstrap
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -16,7 +20,8 @@
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 1.0)
 (set-face-attribute 'variable-pitch nil :family "Helvetica Neue" :height 1.0)
 
-(set-face-attribute 'org-level-1 nil :height 3.0)
+(with-eval-after-load 'org
+  (set-face-attribute 'org-level-1 nil :height 3.0))
 
 ;;; Org-mode — mixed-pitch keeps body in variable-pitch, code/tables in fixed-pitch
 (use-package mixed-pitch
