@@ -12,8 +12,10 @@
 (setq use-package-always-ensure t)
 
 ;;; Meow — modal editing
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+(use-package meow
+  :custom
+  (meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  :config
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
@@ -95,9 +97,5 @@
    '("Y" . meow-sync-grab)
    '("z" . meow-pop-selection)
    '("'" . repeat)
-   '("<escape>" . ignore)))
-
-(use-package meow
-  :config
-  (meow-setup)
+   '("<escape>" . ignore))
   (meow-global-mode 1))
