@@ -16,6 +16,8 @@
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 1.0)
 (set-face-attribute 'variable-pitch nil :family "Helvetica Neue" :height 1.0)
 
+(set-face-attribute 'org-level-1 nil :height 3.0)
+
 ;;; Org-mode — mixed-pitch keeps body in variable-pitch, code/tables in fixed-pitch
 (use-package mixed-pitch
   :hook (org-mode . mixed-pitch-mode))
