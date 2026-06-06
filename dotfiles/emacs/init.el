@@ -11,6 +11,17 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;;; Vertico — minibuffer completion UI
+(use-package vertico
+  :init
+  (vertico-mode))
+
+;;; Orderless — fuzzy matching for completion
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
 ;;; restart-emacs
 (use-package restart-emacs)
 
