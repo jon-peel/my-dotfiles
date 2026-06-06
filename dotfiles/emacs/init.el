@@ -11,6 +11,9 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;;; restart-emacs
+(use-package restart-emacs)
+
 ;;; Meow — modal editing
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
