@@ -13,18 +13,12 @@
 
 ;;; Fonts
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 140)
+(set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 1.0)
 (set-face-attribute 'variable-pitch nil :family "Helvetica Neue" :height 1.0)
 
-;;; Org-mode
-(defun my/org-setup ()
-  (variable-pitch-mode 1)
-  (dolist (face '(org-block org-table org-formula org-code
-                  org-verbatim org-special-keyword org-meta-line org-checkbox))
-    (face-remap-add-relative face :inherit 'fixed-pitch)))
-
-(use-package org
-  :ensure nil
-  :hook (org-mode . my/org-setup))
+;;; Org-mode — mixed-pitch keeps body in variable-pitch, code/tables in fixed-pitch
+(use-package mixed-pitch
+  :hook (org-mode . mixed-pitch-mode))
 
 ;;; Vertico — minibuffer completion UI
 (use-package vertico
