@@ -16,13 +16,15 @@
 (set-face-attribute 'variable-pitch nil :family "Helvetica Neue" :height 1.0)
 
 ;;; Org-mode
-(use-package org
-  :ensure nil
-  :hook (org-mode . variable-pitch-mode)
-  :config
+(defun my/org-setup ()
+  (variable-pitch-mode 1)
   (dolist (face '(org-block org-table org-formula org-code
                   org-verbatim org-special-keyword org-meta-line org-checkbox))
-    (set-face-attribute face nil :inherit 'fixed-pitch)))
+    (face-remap-add-relative face :inherit 'fixed-pitch)))
+
+(use-package org
+  :ensure nil
+  :hook (org-mode . my/org-setup))
 
 ;;; Vertico — minibuffer completion UI
 (use-package vertico
