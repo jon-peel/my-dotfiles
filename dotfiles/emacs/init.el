@@ -1,5 +1,8 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+;;; Startup
+(setq inhibit-startup-screen t)
+
 ;;; Keep Emacs custom writes out of init.el
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file :no-error)
