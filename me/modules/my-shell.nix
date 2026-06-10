@@ -26,6 +26,6 @@
       '';
     };
 
-    home.packages = [ pkgs.starship ];
+    home.packages = [ pkgs.starship pkgs.tmux ];
   };
 }

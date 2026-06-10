@@ -27,13 +27,13 @@ in
   my.shell.enable = true;
   my.emacs.enable = true;
   my.git.enable = true;
+  my.docker.enable = true;
+  my.claude.enable = true;
 
-  my.claude.enable = isTuffy;
   my.r.enable = isTuffy;
   my.i3.enable = isTuffy;
   my.xfce.cde.enable = isTuffy;
   my.rider.enable = isTuffy;
-  my.docker.enable = isTuffy;
   my.browser.enable = isTuffy;
   my.theme.crt.enable = isTuffy;
   my.media.enable = isTuffy;
