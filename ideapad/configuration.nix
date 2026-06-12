@@ -70,6 +70,7 @@ networking = {
     git
     vim
     wget
+    mosh
   ];
 
 

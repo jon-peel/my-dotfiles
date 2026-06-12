@@ -15,6 +15,7 @@
       shellAliases = {
         ll = "ls -lh --color=auto";
         la = "ls -lAh --color=auto";
+	tma = "tmux attach || tmux";
       };
 
       sessionVariables = {
@@ -26,6 +27,6 @@
       '';
     };
 
-    home.packages = [ pkgs.starship pkgs.tmux ];
+    home.packages = with pkgs; [ mc starship tmux  ];
   };
 }
