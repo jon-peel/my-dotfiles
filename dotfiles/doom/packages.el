@@ -54,4 +54,4 @@
 ;; (unpin! t)
 
 (package! eat)
-(package! claudemacs :recipe (:host github :repo "cpoile/claudemacs"))
+(package! claude-code-ide :recipe (:host github :repo "manzaltu/claude-code-ide.el"))

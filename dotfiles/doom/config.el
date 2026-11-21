@@ -107,7 +107,14 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(use-package! claudemacs
-  :commands claudemacs-transient-menu)
+(use-package! claude-code-ide
+  :commands claude-code-ide-menu
+  :init
+  (setq claude-code-ide-terminal-backend 'eat)
+  :config
+  ;; Expose Emacs (xref, LSP, project, diagnostics) to Claude over MCP
+  (claude-code-ide-emacs-tools-setup))
 (map! :leader
-      :desc "Claude Code" "o C" #'claudemacs-transient-menu)
+      :desc "Claude Code" "o C" #'claude-code-ide-menu)
+
+(load! "+dashboard")

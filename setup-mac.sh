@@ -13,5 +13,6 @@ link() {
 echo "Setting up dotfiles symlinks..."
 link "$DOTFILES/dotfiles/doom"              "$HOME/.config/doom"
 link "$DOTFILES/dotfiles/zsh/.zshrc"        "$HOME/.zshrc"
+link "$DOTFILES/dotfiles/zsh/.zprofile"     "$HOME/.zprofile"
 link "$DOTFILES/dotfiles/starship/starship.toml" "$HOME/.config/starship.toml"
 echo "Done."
