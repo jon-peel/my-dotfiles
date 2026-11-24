@@ -23,6 +23,18 @@ alias ll='ls -lh'
 alias la='ls -lah'
 
 # ── Prompt ───────────────────────────────────────────────────────────────────
+# Hosts named like peel-proxy-de get their country's flag (🇩🇪) in the prompt,
+# via starship's env_var module. Two lowercase letters after the last '-' map to
+# the matching pair of regional-indicator characters.
+() {
+  local h=${HOST%%.*} c out=
+  [[ $h == *-[a-z][a-z] ]] || return
+  for c in ${(s::)${h##*-}}; do
+    out+="\\U$(printf %08x $(( #c - 97 + 0x1F1E6 )))"
+  done
+  export HOST_FLAG=${(g::)out}
+}
+
 if [[ $TERM != dumb ]] && (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi

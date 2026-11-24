@@ -1,6 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = """$os$directory$git_branch$git_status$nodejs$python$dotnet$rust$cmd_duration$status$line_break$character"""
+format = """$os${env_var.HOST_FLAG}$directory$git_branch$git_status$nodejs$python$dotnet$rust$cmd_duration$status$line_break$character"""
 
 palette = 'catppuccin_mocha'
 
@@ -8,6 +8,10 @@ palette = 'catppuccin_mocha'
 disabled = false
 format = "[$symbol ]($style)"
 style = "fg:overlay1"
+
+# Set in .zshrc from a hostname ending in a country code (peel-proxy-de → 🇩🇪).
+[env_var.HOST_FLAG]
+format = "$env_value "
 
 [directory]
 format = "[$path ]($style)"
