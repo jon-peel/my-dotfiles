@@ -94,3 +94,5 @@ _zsh_plugin zsh-autosuggestions
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 _zsh_plugin zsh-syntax-highlighting
 unfunction _zsh_plugin
+
+export PATH="$HOME/.local/bin:$PATH"
