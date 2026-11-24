@@ -42,7 +42,12 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Library/CloudStorage/OneDrive-Personal/org")
+(setq org-directory "~/OneDrive/org")
+
+;; Draw emoji with the system font (Noto Color Emoji / Apple Color Emoji)
+;; instead of emojify's default image sets, so it never asks to download one.
+(after! emojify
+  (setq emojify-display-style 'unicode))
 
 ;; Org-mode: monospace font and centered display
 (after! org

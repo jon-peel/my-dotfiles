@@ -1,0 +1,16 @@
+# Two-way sync of OneDrive's org folder with ~/OneDrive/org. Run by org-sync.timer.
+# Same local path as the macOS OneDrive app, so Doom's org-directory works on both.
+# First run on a new machine:
+#   rclone bisync onedrive:org ~/OneDrive/org --filters-file ~/.config/rclone/org-bisync.filter --resync
+[Unit]
+Description=Sync ~/OneDrive/org with OneDrive (rclone bisync)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/rclone bisync onedrive:org %h/OneDrive/org \
+  --filters-file %h/.config/rclone/org-bisync.filter \
+  --resilient --recover --max-lock 2m \
+  --conflict-resolve newer --conflict-loser num \
+  --create-empty-src-dirs --compare size,modtime \
+  --log-level INFO

@@ -1,0 +1,9 @@
+# Filters for `rclone bisync onedrive:org ~/OneDrive/org` (org-sync.service).
+# Changing this file requires one run with --resync.
+
+# Emacs lockfiles (symlinks), autosaves and backups.
+- .#*
+- #*#
+- *~
+# macOS clutter.
+- .DS_Store

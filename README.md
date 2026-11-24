@@ -29,3 +29,26 @@ It's safe to re-run: finished steps are skipped.
 | `dotfiles/zsh/.zprofile` | `~/.zprofile` (PATH) |
 | `dotfiles/doom/` | `~/.config/doom` |
 | `dotfiles/starship/starship.toml` | `~/.config/starship.toml` |
+| `dotfiles/rclone/org-bisync.filter` | `~/.config/rclone/` (Linux) |
+| `dotfiles/systemd/org-sync.{service,timer}` | `~/.config/systemd/user/` (Linux) |
+
+## New Linux machine
+
+```bash
+git clone https://github.com/jon-peel/my-dotfiles.git ~/dotfiles
+~/dotfiles/setup-linux.sh          # asks about each option
+~/dotfiles/setup-linux.sh --all    # or pick: --org-sync, --doom
+```
+
+It always links zsh (`.zshrc`, `.zprofile`) and starship. The options:
+
+- **`--org-sync`** keeps `~/OneDrive/org` in step with OneDrive's `org` folder
+  every 5 minutes (`rclone bisync`, systemd user timer), so Doom's
+  `org-directory` (`~/OneDrive/org`) works on Linux and macOS alike. It
+  installs rclone to `~/.local/bin`. Sign-in is the one manual step: the first
+  run prints how (`rclone config`, then `rclone authorize "onedrive"` on a
+  machine with a browser), and re-running then does the first sync.
+- **`--doom`** installs emacs, git, ripgrep and fd with apt if missing, links
+  `~/.config/doom`, and clones and installs Doom Emacs (or runs `doom sync`).
+
+It's safe to re-run: finished steps are skipped.
